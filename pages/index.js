@@ -1,13 +1,24 @@
 import Image from "next/image";
 import { useState } from "react";
+import { LoginMember } from "../services/api";
+import Cookies from "js-cookie";
 
 export default function Home() {
 
   const [userId, setUserId] = useState()
   const [password, setPassword] = useState()
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
+
+    try {
+      const { data } = await LoginMember({ email: userId, password })
+      Cookies.set("accessCookie", data.access);
+      Cookies.set("refreshCookie", data.refresh);
+      console.log(data)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
