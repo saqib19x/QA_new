@@ -1,3 +1,107 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input-group input,
+.bud_select {
+  border: 1.5px solid rgb(224, 224, 224);
+  border-radius: 5px;
+}
+
+.input-group input:focus {
+  outline: none;
+  border: 1.5px solid #fa5853;
+  background-color: white;
+}
+
+.bud_select:focus {
+  outline: none;
+  border: 1.5px solid #fa5853;
+}
+
+.input-group label {
+  left: 18px;
+  background-color: white;
+  padding: 0 5px;
+  top: -8px;
+  color: rgb(174, 174, 174);
+  font-size: 0.7rem;
+}
+.diff_lead li:first-child {
+  padding-top: 30px;
+}
+.diff_lead li {
+  border-bottom: 1px solid rgb(228, 228, 228);
+  padding: 5px;
+}
+
+.diff_lead li h3 {
+  width: 100%;
+  padding: 8px;
+  font-weight: 600;
+  border-radius: 5px;
+}
+.accepted_lead_list li {
+  border-bottom: 1px solid rgb(231, 231, 231);
+  padding: 7px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.amenti:focus {
+  border: 1px solid red !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.resident {
+  position: absolute;
+  width: 100%;
+}
+
+.file_att {
+  border: none !important;
+}
+
+/* ////////mylead//////// */
+.lead_table::-webkit-scrollbar {
+  width: 4px;
+}
+.lead_table::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lead_table::-webkit-scrollbar-thumb {
+  background-color: blue;
+  border-radius: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+/* /////lead form css/////////// */
+.Em_Profile {
+  background: linear-gradient(180deg, #ffa686 0%, #ffdacc 94.27%);
+}
+.emp_profile p {
+  color: gray;
+  font-size: 0.8rem;
+}
+.emp_profile input {
+  padding: 8px 10px;
+  background-color: white;
+  border-radius: 0.3rem;
+}
+.emp_profile input:focus {
+  outline: none;
+}

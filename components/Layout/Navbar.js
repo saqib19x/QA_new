@@ -3,28 +3,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
 
+    const { user } = useSelector(state => state.auth)
     const [show, setShow] = useState(false);
     const router = useRouter();
 
     const LogOut = () => {
-        Cookies.set("access", "");
-        Cookies.set("refresh", "");
-        router.push("/login");
+        Cookies.remove("access");
+        Cookies.remove("refresh");
+        router.push("/");
     };
 
     return (
         <div>
-            <div className="fixed w-full h-16 flex items-center  justify-between px-20 p-1.5 bg-[#383A49]">
+            <div className="fixed top-0 z-50 w-full h-16 flex items-center  justify-between px-20 p-1.5 bg-[#383A49]">
                 <Image alt="" src="/images/sovi_main.svg" width={50} height={30} />
                 <div className="flex items-center">
-                    <Link href="/myleads">
-                        <h3 className="text-white mr-4 cursor-pointer">My Leads</h3>
-                    </Link>
                     <h3 className=" font-semibold cursor-pointer text-sm mr-2 text-white">
-                        efwerge
+                        {user?.emp_id}
                     </h3>
                     <div
                         className="flex items-center relative"

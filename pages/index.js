@@ -2,9 +2,14 @@ import Image from "next/image";
 import { useState } from "react";
 import { LoginMember } from "../services/api";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { setAuth } from '../redux/authSlice'
+import { useRouter } from 'next/router'
 
 export default function Home() {
 
+  const router = useRouter()
+  const dispatch = useDispatch()
   const [userId, setUserId] = useState()
   const [password, setPassword] = useState()
 
@@ -13,9 +18,10 @@ export default function Home() {
 
     try {
       const { data } = await LoginMember({ email: userId, password })
-      Cookies.set("accessCookie", data.access);
-      Cookies.set("refreshCookie", data.refresh);
-      console.log(data)
+      dispatch(setAuth(data))
+      Cookies.set("access", data.access);
+      Cookies.set("refresh", data.refresh);
+      router.push('/dashboard')
     } catch (err) {
       console.log(err)
     }
@@ -59,9 +65,9 @@ export default function Home() {
           <button className=" w-full bg-[#FF7948] rounded py-2 text-white mt-4">
             LOGIN
           </button>
-          <div className="text-white mt-2 cursor-pointer">
+          {/* <div className="text-white mt-2 cursor-pointer">
             Forget password ?
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
