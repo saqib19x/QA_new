@@ -6,7 +6,7 @@ const Sidebar = () => {
     const [activelead, setActivelead] = useState(0);
 
     const leadType = [
-        { id: 1, title: "All Employees", goto: '/leads/all' },
+        { id: 1, title: "All Employees", goto: '/dashboard' },
         { id: 2, title: "All Leads", goto: '/leads/all' },
         { id: 3, title: "Rejected leads", goto: '/leads/rejected' },
         { id: 4, title: "Accepted leads", goto: '/leads/accepted' },

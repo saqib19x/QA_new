@@ -17,6 +17,7 @@ export const GetAllEmployee = () => api.get('/QA/all-employees/')
 export const GetAllAcceptedLeads = () => api.get('/QA/accepted-lead/')
 export const GetAllRejectedLeads = () => api.get('/QA/rejected-lead/')
 export const GetAllLeads = () => api.get('/QA/leads/')
+export const UpdateLead = (id, data) => api.put(`/QA/lead-update/${id}`, data)
 
 
 export default api

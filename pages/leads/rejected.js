@@ -35,7 +35,7 @@ const RejectedLeads = () => {
                 <div className="w-full min-h-screen mt-4">
                     <div className="w-full h-auto">
                         <ul className="">
-                            {leads.length === 0 ? <>
+                            {leads?.length === 0 ? <>
                                 <h1>No  Rejected Leads</h1>
                             </> : leads?.map((cur) => {
                                 return (
