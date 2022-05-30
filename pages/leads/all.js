@@ -3,31 +3,33 @@ import Image from "next/image";
 import { GetAllLeads, UpdateLead } from "../../services/api";
 import Sidebar from "../../components/Layout/Sidebar";
 import dynamic from "next/dist/shared/lib/dynamic";
+import { useDispatch, useSelector } from "react-redux";
+import { setLeads } from "../../redux/leadSlice";
 const Audio = dynamic(() => import("../../components/Audio/index"), { ssr: false });
 
-function Allleads({ dum }) {
+function Allleads() {
+
+    const dispatch = useDispatch()
+    const { leads } = useSelector(state => state.leads)
     const [detail, setDetails] = useState();
     const [cancel, setCancel] = useState(false);
     const [accepted, setAccepted] = useState([]);
     const [rejected, setRejected] = useState([]);
     const [notes, setNote] = useState([]);
-    const [leads, setLeads] = useState()
-    const [leadType, setLeadType] = useState()
     const [message, setMessage] = useState()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const { data } = await GetAllLeads()
-                setLeads(data.records)
-                console.log(data)
+                dispatch(setLeads(data.records))
             } catch (err) {
                 console.log(err)
             }
         }
 
         fetchData()
-    }, [])
+    }, [dispatch])
 
     const handleAccept = async (data) => {
 
@@ -40,9 +42,10 @@ function Allleads({ dum }) {
         console.log(data.id)
         const id = data.id;
 
+
         try {
-            const { data } = await UpdateLead(id)
-            console.log(data)
+            const { data } = await UpdateLead(id, payload)
+            dispatch(setLeads(data.records))
         } catch (err) {
             console.log(err)
         }
@@ -57,17 +60,16 @@ function Allleads({ dum }) {
 
         try {
             const { data } = await UpdateLead(id, payload)
-            console.log(data)
+            dispatch(setLeads(data.records))
         } catch (err) {
             console.log(err)
         }
     }
 
-    console.log(accepted)
-
     return (
         <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
             <Sidebar />
+            {leads?.length}
             <div className="w-10/12 py-8 px-12 pr-16 ">
                 <div className="w-full min-h-screen mt-4">
                     <div className="w-full h-auto">
@@ -122,7 +124,9 @@ function Allleads({ dum }) {
                                                         }}>
                                                             Premium
                                                         </button>
-                                                        <button className="px-2 p-1 rounded bg-[#E96E6E] text-white text-sm">
+                                                        <button className="px-2 p-1 rounded bg-[#E96E6E] text-white text-sm" onClick={() => {
+                                                            handleAccept({ id: cur.id, lead_type: 'Basic' })
+                                                        }}>
                                                             Basic
                                                         </button>
                                                     </div>

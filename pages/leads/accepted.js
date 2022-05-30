@@ -17,7 +17,7 @@ const AcceptedLeads = () => {
         const fetchData = async () => {
             try {
                 const { data } = await GetAllAcceptedLeads()
-                setLeads(data)
+                setLeads(data.records)
                 console.log(data)
             } catch (err) {
                 console.log(err)
@@ -71,7 +71,7 @@ const AcceptedLeads = () => {
                                                     Accepted
                                                 </h1>
                                                 <div className="w-full relative">
-                                                    <button className="px-2 p-1 rounded bg-green-500 text-white text-sm">
+                                                    <button className={`px-2 p-1 rounded ${cur?.lead_type === 'Hot' ? "bg-green-500 text-white" : cur?.lead_type === 'Premium' ? "bg-yellow-500 text-white" : "bg-red-400 text-white"} text-sm`}>
                                                         {cur?.lead_type}
                                                     </button>
 

@@ -17,7 +17,7 @@ const RejectedLeads = () => {
         const fetchData = async () => {
             try {
                 const { data } = await GetAllRejectedLeads()
-                setLeads(data)
+                setLeads(data.records)
                 console.log(data)
             } catch (err) {
                 console.log(err)
@@ -27,6 +27,7 @@ const RejectedLeads = () => {
         fetchData()
     }, [])
 
+    console.log(leads)
 
     return (
         <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
@@ -54,8 +55,8 @@ const RejectedLeads = () => {
                                                     />{" "}
                                                     <div className="ml-4">
                                                         <p>
-                                                            Sakshi Agrawal{" "}
-                                                            <span className=" text-blue-500">4.6/5</span>
+                                                            {cur.full_name}
+                                                            <span className=" text-blue-500"> {cur.rating}/5</span>
                                                             <i className="fa-solid fa-star text-sm text-yellow-400"></i>
                                                         </p>
                                                         <p>98765********</p>
@@ -63,7 +64,7 @@ const RejectedLeads = () => {
                                                     <br />
                                                 </div>
                                                 <p className=" leading-4 text-xs text-gray-700">
-                                                    Lead ID- 687
+                                                    Lead ID- {cur.id}
                                                 </p>
                                             </div>
                                             <div className="flex items-center">
@@ -75,7 +76,7 @@ const RejectedLeads = () => {
                                                         Rejected
                                                     </h1>
                                                     <div className="w-40 h-10 border border-black rounded p-1 overflow-hidden text-xs">
-                                                        Lorem ipsum dolor sit amet,...
+                                                        {cur.notes}
                                                     </div>
                                                     <i className="fa-solid fa-rotate-left text-lg cursor-pointer ml-2"></i>
                                                 </div>

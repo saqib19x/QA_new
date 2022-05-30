@@ -6,7 +6,7 @@ const api = axios.create({
     headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        Authorization: `Bearer  ${Cookies.get("access")}`,
+        Authorization: `Bearer ${Cookies.get("access")}`,
     },
     "X-CSRFToken":
         "LfsCaagQn8VJUMc7hW5vqvxJiJm6AhDhfOCj7cv15Ad0n8ylCzvWsVApzsA6W2Ee",
