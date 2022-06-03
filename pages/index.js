@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setAuth } from '../redux/authSlice'
 import { useRouter } from 'next/router'
+import toast from "react-hot-toast";
 
 export default function Home() {
 
@@ -22,6 +23,7 @@ export default function Home() {
       Cookies.set("access", data.access);
       Cookies.set("refresh", data.refresh);
       router.push('/dashboard')
+      toast.success('Successfully LoggedIn 🎉')
     } catch (err) {
       console.log(err)
     }
@@ -65,9 +67,6 @@ export default function Home() {
           <button className=" w-full bg-[#FF7948] rounded py-2 text-white mt-4">
             LOGIN
           </button>
-          {/* <div className="text-white mt-2 cursor-pointer">
-            Forget password ?
-          </div> */}
         </form>
       </div>
     </div>

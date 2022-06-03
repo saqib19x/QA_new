@@ -4,6 +4,8 @@ const Audio = dynamic(() => import("../../components/Audio/index"), { ssr: false
 import Sidebar from '../../components/Layout/Sidebar'
 import Image from 'next/dist/client/image';
 import { GetAllAcceptedLeads } from '../../services/api';
+import axios from 'axios';
+import Cookies from 'js-cookie'
 
 const AcceptedLeads = () => {
 
@@ -16,7 +18,13 @@ const AcceptedLeads = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await GetAllAcceptedLeads()
+                const { data } = await axios.get("http://api.sovi.ai/QA/accepted-lead/", {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${Cookies.get("access")}`,
+                    }
+                })
                 setLeads(data.records)
                 console.log(data)
             } catch (err) {

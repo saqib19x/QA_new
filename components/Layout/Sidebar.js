@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import React, { useState } from 'react'
+import { useRouter } from 'next/dist/client/router';
 
 const Sidebar = () => {
 
+    const router = useRouter()
     const [activelead, setActivelead] = useState(0);
-
+    const path = router.pathname
     const leadType = [
         { id: 1, title: "All Employees", goto: '/dashboard' },
-        { id: 2, title: "All Leads", goto: '/leads/all' },
+        { id: 2, title: "Pending Leads", goto: '/leads/all' },
         { id: 3, title: "Rejected leads", goto: '/leads/rejected' },
         { id: 4, title: "Accepted leads", goto: '/leads/accepted' },
     ];
@@ -26,7 +28,7 @@ const Sidebar = () => {
                                 onClick={() => setActivelead(Ele.id)}
                             >
                                 <h3
-                                    className={` ${activelead == Ele.id ? "bg-prime-red text-white" : ""
+                                    className={` ${path === Ele.goto ? "bg-prime-red text-white" : ""
                                         } `}
                                 >
                                     {Ele.title}

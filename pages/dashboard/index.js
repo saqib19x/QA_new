@@ -4,6 +4,8 @@ import Employee from '../../components/Employee';
 import Sidebar from '../../components/Layout/Sidebar'
 import { GetAllEmployee, GetAllLeads } from '../../services/api';
 import Link from 'next/link';
+import axios from 'axios';
+import Cookies from 'js-cookie'
 
 const Dashboard = () => {
 
@@ -27,14 +29,18 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await GetAllEmployee()
-                setEmpShow(data)
-                console.log(data)
+                const { data } = await axios.get("http://api.sovi.ai/QA/leads/", {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${Cookies.get("access")}`,
+                    }
+                })
+                setEmpShow(data.records)
             } catch (err) {
                 console.log(err)
             }
         }
-
         fetchData()
     }, [])
 

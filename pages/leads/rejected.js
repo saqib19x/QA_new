@@ -4,6 +4,8 @@ import dynamic from "next/dist/shared/lib/dynamic";
 import { GetAllRejectedLeads } from '../../services/api';
 const Audio = dynamic(() => import("../../components/Audio/index"), { ssr: false });
 import Image from 'next/dist/client/image';
+import Cookies from 'js-cookie'
+import axios from 'axios';
 
 const RejectedLeads = () => {
 
@@ -16,7 +18,13 @@ const RejectedLeads = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await GetAllRejectedLeads()
+                const { data } = await axios.get("http://api.sovi.ai/QA/rejected-lead/", {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${Cookies.get("access")}`,
+                    }
+                })
                 setLeads(data.records)
                 console.log(data)
             } catch (err) {

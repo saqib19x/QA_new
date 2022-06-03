@@ -5,7 +5,10 @@ import Sidebar from "../../components/Layout/Sidebar";
 import dynamic from "next/dist/shared/lib/dynamic";
 import { useDispatch, useSelector } from "react-redux";
 import { setLeads } from "../../redux/leadSlice";
+import axios from "axios";
+import toast from "react-hot-toast";
 const Audio = dynamic(() => import("../../components/Audio/index"), { ssr: false });
+import Cookies from 'js-cookie'
 
 function Allleads() {
 
@@ -27,7 +30,6 @@ function Allleads() {
                 console.log(err)
             }
         }
-
         fetchData()
     }, [dispatch])
 
@@ -38,15 +40,19 @@ function Allleads() {
             status: "Accepted",
             "notes": "string"
         }
-
-        console.log(data.id)
         const id = data.id;
-
-
         try {
-            const { data } = await UpdateLead(id, payload)
+            const { data } = await axios.put(`http://api.sovi.ai/QA/lead-update/${id}`, { id, payload }, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json',
+                    Authorization: `Bearer ${Cookies.get("access")}`,
+                },
+            })
             dispatch(setLeads(data.records))
+            toast.success('Accepted')
         } catch (err) {
+            toast.error('Error Occured')
             console.log(err)
         }
     }
@@ -58,9 +64,18 @@ function Allleads() {
             "notes": message
         }
 
+        console.log(Cookies.get('access'))
+
         try {
-            const { data } = await UpdateLead(id, payload)
+            const { data } = await axios.put(`http://api.sovi.ai/QA/lead-update/${id}`, { id, payload }, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json',
+                    Authorization: `Bearer ${Cookies.get("access")}`,
+                },
+            })
             dispatch(setLeads(data.records))
+            toast.success('Rejected')
         } catch (err) {
             console.log(err)
         }
@@ -69,11 +84,11 @@ function Allleads() {
     return (
         <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
             <Sidebar />
-            {leads?.length}
             <div className="w-10/12 py-8 px-12 pr-16 ">
                 <div className="w-full min-h-screen mt-4">
                     <div className="w-full h-auto">
                         <ul className="">
+
                             {leads?.map((cur) => {
                                 return (
                                     <li
@@ -92,7 +107,7 @@ function Allleads() {
                                                     <div className="ml-4">
                                                         <p>
                                                             {cur.full_name}
-                                                            <span className=" text-blue-500"> 4.6/5</span>
+                                                            <span className=" text-blue-500"> {cur.rating}/5</span>
                                                             <i className="fa-solid fa-star text-sm text-yellow-400"></i>
                                                         </p>
                                                         <p>98765********</p>
@@ -196,10 +211,11 @@ function Allleads() {
                                                     </div>
                                                 }
 
-
                                             </div>
                                         </div>
-                                        {/* ///details start/// */}
+                                        <div className="w-full flex justify-end items-end">
+                                            <h1 className="text-blue-500 cursor-pointer" onClick={() => setDetails(cur)}>View All Details</h1>
+                                        </div>
 
                                         {/* ////////View All Details/////////// */}
                                         <div
@@ -210,35 +226,29 @@ function Allleads() {
                                                 <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
                                                     7 or 8th floor
                                                 </div>
-                                                <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                                                    To buy
-                                                </div>
-                                                <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                                                    Society with children park
-                                                </div>
-                                                <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                                                    Parking space
-                                                </div>
+                                                {
+                                                    cur?.aminities?.map((e, i) => <div key={i} className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
+                                                        {e}
+                                                    </div>)
+                                                }
                                                 <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
                                                     3 BHK
                                                 </div>
                                             </div>
                                             <div className="w-8/12 flex mt-4 text-sm">
                                                 <h1 className="text-base font-semibold mr-2">Note-</h1>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                                Pellentesque sed varius ipsum, est. Aenean ultrices
-                                                ullamcorper dolor pharetra. In lorem et eros, maecenas
-                                                vestibulum, in interdum.
+                                                {cur.notes}
                                             </div>
                                             <div className=" flex items-center justify-between mt-2">
                                                 <h1 className=" font-semibold">
-                                                    Budget- <span className="text-blue-700">50-70 lakhs</span>{" "}
+                                                    Budget- <span className="text-blue-700">{cur.budget}</span>{" "}
                                                 </h1>
                                             </div>
                                         </div>
                                     </li>
                                 );
                             })}
+
                         </ul>
                     </div>
                 </div>
