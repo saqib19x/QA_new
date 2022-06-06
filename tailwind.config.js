@@ -9,6 +9,7 @@ module.exports = {
         first_linear:
           "linear-gradient(120.48deg, #3BB1DD 0%, #7273E4 44.37%, #A23DEA 100%)",
         form_bg: "linear-gradient(360deg, #BAA09F -12.54%, #7C6C6C 99.99%); ",
+        login_bg: "url('/images/Frame 1.png')",
       },
       colors: {
         "prime-red": "#fa5853",
@@ -19,4 +20,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

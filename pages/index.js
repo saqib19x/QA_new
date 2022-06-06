@@ -3,72 +3,79 @@ import { useState } from "react";
 import { LoginMember } from "../services/api";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import { setAuth } from '../redux/authSlice'
-import { useRouter } from 'next/router'
+import { setAuth } from "../redux/authSlice";
+import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
-export default function Home() {
-
-  const router = useRouter()
-  const dispatch = useDispatch()
-  const [userId, setUserId] = useState()
-  const [password, setPassword] = useState()
-
+const Home = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [userId, setUserId] = useState();
+  const [password, setPassword] = useState();
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const { data } = await LoginMember({ email: userId, password })
-      dispatch(setAuth(data))
+      const { data } = await LoginMember({ email: userId, password });
+      dispatch(setAuth(data));
       Cookies.set("access", data.access);
       Cookies.set("refresh", data.refresh);
-      router.push('/dashboard')
-      toast.success('Successfully LoggedIn 🎉')
+      router.push("/dashboard");
+      toast.success("Successfully LoggedIn 🎉");
     } catch (err) {
-      console.log(err)
+      toast.error(err?.response?.data[0]?.non_field_errors);
     }
-  }
+  };
 
   return (
-    <div className="w-full h-screen bg-first_linear bg-cover bg-center bg-no-repeat">
-      <div className="flex p-2">
-        <Image src="/images/sovi_logo.svg" width={100} height={30} alt="" />
-      </div>
-      <div className="w-4/12 mx-auto text-center mt-8">
-        <Image src="/images/user_icon.svg" width={100} height={50} alt="" />
-        <h1 className=" text-4xl text-white">Member Login</h1>
+    <div>
+      <div className="w-full h-screen flex relative">
+        <div className="m-2 ml-8">
+          <Image src="/images/sovi_black.svg" width={80} height={50} alt="" />
+        </div>
+        <div className="w-7/12 h-full bg-white p-20 flex flex-col justify-center">
+          <div className=" flex justify-center">
+            <Image
+              src="/images/Profile_icon.svg"
+              width={50}
+              height={50}
+              alt=""
+            />
+          </div>
+          <h1 className=" text-4xl font-semiboldd text-center pt-2">
+            Q/A Login
+          </h1>
 
-        <form onSubmit={handleLogin}>
-          <div className="w-full text-left my-3">
-            <label htmlFor="user" className=" text-white">
-              Username*
-            </label>
-            <br />
-            <input
-              type="text"
-              required
-              className="w-full p-2 rounded focus:outline-none"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            />
+          <div className="text-left w-10/12 mx-auto">
+            <form onSubmit={handleLogin}>
+              <div className=" mt-12">
+                <p className=" text-gray-500">Username </p>
+                <input
+                  type="text"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                  className="w-full p-2 border-2 border-gray-300 focus:border-gray-300 rounded focus:outline-none"
+                />
+              </div>
+              <div className="mt-4 relative">
+                <p className=" text-gray-500">Password</p>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-2 border-2 border-gray-300 focus:border-gray-300 rounded focus:outline-none"
+                />
+              </div>
+              <button className=" w-full bg-blue-700 hover:bg-blue-500 font-semibold text-lg text-white py-2 rounded mt-8">
+                Log In
+              </button>
+            </form>
           </div>
-          <div className="w-full text-left mb-3">
-            <label htmlFor="user" className=" text-white">
-              Password*
-            </label>{" "}
-            <br />
-            <input
-              type="password"
-              className="w-full p-2 rounded focus:outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button className=" w-full bg-[#FF7948] rounded py-2 text-white mt-4">
-            LOGIN
-          </button>
-        </form>
+        </div>
+        <div className="w-5/12 h-full bg-login_bg  bg-cover bg-center bg-no-repeat"></div>
       </div>
     </div>
   );
-}
+};
+
+export default Home;
