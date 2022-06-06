@@ -89,6 +89,7 @@ function Allleads() {
       console.log(err);
     }
   };
+  console.log(leads);
   function fetchData() {
     console.log("hello");
   }
@@ -139,9 +140,7 @@ function Allleads() {
                           </p>
                         </div>
                         <div className="flex items-center">
-                          <div className=" min-w-[250px] rounded h-10 border border-blue-700 mr-6">
-                            <Audio />
-                          </div>
+                          <audio src={cur.audio} controls></audio>
 
                           {accepted?.includes(cur) && (
                             <div className={`flex items-center ml-2 `}>
@@ -193,7 +192,7 @@ function Allleads() {
                               </span>
                               <button
                                 className={`p-2 py-1 border rounded border-black ${
-                                  notes.includes(cur.id) ? "hidden" : "block"
+                                  notes?.includes(cur.id) ? "hidden" : "block"
                                 }`}
                                 onClick={() => setNote([cur.id, ...notes])}
                               >
