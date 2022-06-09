@@ -148,15 +148,12 @@ const AcceptedLeads = () => {
                     </div>
                     <div className="w-8/12 flex mt-4 text-sm">
                       <h1 className="text-base font-semibold mr-2">Note-</h1>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Pellentesque sed varius ipsum, est. Aenean ultrices
-                      ullamcorper dolor pharetra. In lorem et eros, maecenas
-                      vestibulum, in interdum.
+                      {cur?.notes}
                     </div>
                     <div className=" flex items-center justify-between mt-2">
                       <h1 className=" font-semibold">
                         Budget-{" "}
-                        <span className="text-blue-700">50-70 lakhs</span>{" "}
+                        <span className="text-blue-700">{cur?.budget}</span>{" "}
                       </h1>
                     </div>
                   </div>

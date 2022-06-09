@@ -29,16 +29,12 @@ const RejectedLeads = () => {
           }
         );
         setLeads(data.records);
-        console.log(data);
       } catch (err) {
         console.log(err);
       }
     };
-
     fetchData();
   }, []);
-
-  console.log(leads);
 
   return (
     <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
@@ -48,9 +44,11 @@ const RejectedLeads = () => {
           <div className="w-full h-auto">
             <ul className="">
               {leads?.length === 0 ? (
-                <>
-                  <h1>No Rejected Leads</h1>
-                </>
+                <div className="w-full h-screen flex items-center justify-center">
+                  <div className=" text-gray-300">
+                    <i className="fa-solid fa-box fa-4x"></i> <p>No Data</p>
+                  </div>
+                </div>
               ) : (
                 leads?.map((cur) => {
                   return (
@@ -147,15 +145,12 @@ const RejectedLeads = () => {
                           <h1 className="text-base font-semibold mr-2">
                             Note-
                           </h1>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Pellentesque sed varius ipsum, est. Aenean
-                          ultrices ullamcorper dolor pharetra. In lorem et eros,
-                          maecenas vestibulum, in interdum.
+                          {cur?.notes}
                         </div>
                         <div className=" flex items-center justify-between mt-2">
                           <h1 className=" font-semibold">
                             Budget-{" "}
-                            <span className="text-blue-700">50-70 lakhs</span>{" "}
+                            <span className="text-blue-700">{cur?.budget}</span>{" "}
                           </h1>
                         </div>
                       </div>
