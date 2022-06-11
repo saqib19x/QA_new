@@ -20,8 +20,8 @@ const Home = () => {
       dispatch(setAuth(data));
       Cookies.set("access", data.access);
       Cookies.set("refresh", data.refresh);
-      router.push("/dashboard");
       toast.success("Successfully LoggedIn 🎉");
+      router.push("/dashboard");
     } catch (err) {
       toast.error(err?.response?.data[0]?.non_field_errors);
     }

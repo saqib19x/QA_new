@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 const Employee = () => {
   const { emp } = useSelector((state) => state.emp);
   const dispatch = useDispatch();
-  console.log(emp);
   const router = useRouter();
   const path = router.query.employee;
   const [firstName, setFirstName] = useState();

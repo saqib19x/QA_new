@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
 import dynamic from "next/dist/shared/lib/dynamic";
-import { GetAllRejectedLeads } from "../../services/api";
-const Audio = dynamic(() => import("../../components/Audio/index"), {
-  ssr: false,
-});
+import { GetAllRejectedLeads, UpdateRejectlead } from "../../services/api";
+import { toast } from "react-hot-toast";
 import Image from "next/dist/client/image";
-import Cookies from "js-cookie";
-import axios from "axios";
+import PropertyDetails from "../../components/PropertyDetails";
 
 const RejectedLeads = () => {
   const [opt, setOpt] = useState(false);
@@ -18,16 +15,7 @@ const RejectedLeads = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(
-          "http://api.sovi.ai/QA/rejected-lead/",
-          {
-            headers: {
-              "Content-type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("access")}`,
-            },
-          }
-        );
+        const { data } = await GetAllRejectedLeads();
         setLeads(data.records);
       } catch (err) {
         console.log(err);
@@ -35,7 +23,21 @@ const RejectedLeads = () => {
     };
     fetchData();
   }, []);
-
+  //////////Handle Undo/////////////
+  const handleUndo = async (id) => {
+    try {
+      const { data } = await UpdateRejectlead(id, { status: "Pending" });
+      toast.success("Successfully Update");
+      try {
+        const { data } = await GetAllRejectedLeads();
+        setLeads(data.records);
+      } catch (err) {
+        console.log(err);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
       <Sidebar />
@@ -91,7 +93,10 @@ const RejectedLeads = () => {
                             <div className="w-40 h-10 border border-black rounded p-1 overflow-hidden text-xs">
                               {cur.notes}
                             </div>
-                            <i className="fa-solid fa-rotate-left text-lg cursor-pointer ml-2"></i>
+                            <i
+                              className="fa-solid fa-rotate-left text-lg cursor-pointer ml-2"
+                              onClick={() => handleUndo(cur?.id)}
+                            ></i>
                           </div>
                         </div>
                       </div>
@@ -120,37 +125,46 @@ const RejectedLeads = () => {
                       )}
                       {/* ////////////Dropdown///////////active////////////// */}
                       <div
-                        className={`  w-full mt-1 ${
+                        className={` ${
                           detail === cur ? "block" : "hidden"
-                        } `}
+                        } w-full mt-1`}
                       >
-                        <div className="flex items-center">
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            7 or 8th floor
-                          </div>
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            To buy
-                          </div>
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            Society with children park
-                          </div>
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            Parking space
-                          </div>
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            3 BHK
-                          </div>
-                        </div>
+                        <PropertyDetails
+                          comm={cur?.commercial}
+                          res={cur?.residential}
+                          bhk={cur?.bhk_option}
+                          other={cur?.other_property_type}
+                          sqft={cur?.sqrft}
+                        />
                         <div className="w-8/12 flex mt-4 text-sm">
                           <h1 className="text-base font-semibold mr-2">
                             Note-
                           </h1>
-                          {cur?.notes}
+                          {cur.notes}
+                        </div>
+                        <div
+                          className={`w-8/12 relative rounded flex-wrap overflow-hidden text-xs flex 
+                            px-2 my-2 justify-items-start gap-y-1 p-1.5 bg-gray-700 text-white ${
+                              cur?.aminities?.length <= 0 ? "hidden" : "block"
+                            }
+                   `}
+                        >
+                          {cur.aminities.map((e, index) => {
+                            return (
+                              <div
+                                className="text-white flex items-center pr-4"
+                                key={index}
+                              >
+                                <div>{e}</div>
+                              </div>
+                            );
+                          })}
+                          {cur?.aminities?.length == 0 ? "No Amenities" : ""}
                         </div>
                         <div className=" flex items-center justify-between mt-2">
                           <h1 className=" font-semibold">
                             Budget-{" "}
-                            <span className="text-blue-700">{cur?.budget}</span>{" "}
+                            <span className="text-blue-700">{cur.budget}</span>{" "}
                           </h1>
                         </div>
                       </div>

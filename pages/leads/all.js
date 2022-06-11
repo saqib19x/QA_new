@@ -12,6 +12,7 @@ const Audio = dynamic(() => import("../../components/Audio/index"), {
   ssr: false,
 });
 import Cookies from "js-cookie";
+import PropertyDetails from "../../components/PropertyDetails";
 
 function Allleads() {
   const dispatch = useDispatch();
@@ -29,13 +30,13 @@ function Allleads() {
       try {
         const { data } = await GetAllLeads();
         dispatch(setLeads(data.records));
+        console.log(data.records);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [dispatch]);
-  console.log(notes);
   const handleAccept = async (data) => {
     const payload = {
       lead_type: data.lead_type,
@@ -113,7 +114,7 @@ function Allleads() {
                   {leads?.map((cur) => {
                     return (
                       <li
-                        className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-2 px-4"
+                        className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-4 px-8"
                         key={cur.id}
                       >
                         <div className="flex w-full items-center justify-between">
@@ -186,8 +187,8 @@ function Allleads() {
                               </div>
                             )}
 
-                            {rejected.includes(cur) && (
-                              <div className=" flex items-center min-w-[192px] justify-around">
+                            {rejected?.includes(cur) && (
+                              <div className="flex items-center min-w-[192px] justify-around">
                                 <span
                                   className={`text-red-500 text-sm font-semibold`}
                                 >
@@ -220,10 +221,11 @@ function Allleads() {
                                 </div>
                                 <i
                                   className="cursor-pointer fa-solid fa-xmark text-lg ml-2"
-                                  onClick={() => {
-                                    setCancel(false);
-                                    setNote(false);
-                                  }}
+                                  onClick={() =>
+                                    setRejected(
+                                      rejected?.filter((e) => cur.id != e.id)
+                                    )
+                                  }
                                 ></i>
                               </div>
                             )}
@@ -261,7 +263,7 @@ function Allleads() {
                         </div>
                         <div className="w-full flex justify-end items-end">
                           <h1
-                            className="text-blue-500 cursor-pointer"
+                            className="text-blue-500 text-sm cursor-pointer"
                             onClick={() => setDetails(cur)}
                           >
                             View All Details
@@ -272,29 +274,39 @@ function Allleads() {
                         <div
                           className={` ${
                             detail === cur ? "block" : "hidden"
-                          } w-full mt-4`}
+                          } w-full mt-1`}
                         >
-                          <div className="flex items-center">
-                            <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                              7 or 8th floor
-                            </div>
-                            {cur?.aminities?.map((e, i) => (
-                              <div
-                                key={i}
-                                className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500"
-                              >
-                                {e}
-                              </div>
-                            ))}
-                            <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                              3 BHK
-                            </div>
-                          </div>
+                          <PropertyDetails
+                            comm={cur?.commercial}
+                            res={cur?.residential}
+                            bhk={cur?.bhk_option}
+                            other={cur?.other_property_type}
+                            sqft={cur?.sqrft}
+                          />
                           <div className="w-8/12 flex mt-4 text-sm">
                             <h1 className="text-base font-semibold mr-2">
                               Note-
                             </h1>
                             {cur.notes}
+                          </div>
+                          <div
+                            className={`w-8/12 relative rounded flex-wrap overflow-hidden text-xs flex 
+                            px-2 my-2 justify-items-start gap-y-1 p-1.5 bg-gray-700 text-white ${
+                              cur?.aminities?.length <= 0 ? "hidden" : "block"
+                            }
+                   `}
+                          >
+                            {cur.aminities.map((e, index) => {
+                              return (
+                                <div
+                                  className="text-white flex items-center pr-4"
+                                  key={index}
+                                >
+                                  <div>{e}</div>
+                                </div>
+                              );
+                            })}
+                            {cur?.aminities?.length == 0 ? "No Amenities" : ""}
                           </div>
                           <div className=" flex items-center justify-between mt-2">
                             <h1 className=" font-semibold">
