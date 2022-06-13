@@ -109,3 +109,11 @@ input[type='number'] {
 audio::-webkit-media-controls-panel {
   background-color: #e8fffc;
 }
+
+/* ////////accept_Lead////// */
+.accept_Lead button{
+ font-size: 0.8rem;
+ border-bottom: 1px solid rgb(223, 223, 223);
+ width: 100%;
+ padding: 1px 0;
+}

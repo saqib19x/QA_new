@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dist/shared/lib/dynamic";
-const Audio = dynamic(() => import("../../components/Audio/index"), {
-  ssr: false,
-});
+import React, { useEffect, useState, useMemo } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
 import Image from "next/dist/client/image";
-import { GetAllAcceptedLeads } from "../../services/api";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { UpdateAccepted, GetAllAcceptedLeads } from "../../services/api";
+import { setAcceptLead } from "../../redux/acceptSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-hot-toast";
+import OutsideClickHandler from "react-outside-click-handler";
+import PropertyDetails from "../../components/PropertyDetails";
 
 const AcceptedLeads = () => {
+  const { accptlead } = useSelector((state) => state.accptlead);
+  const dispatch = useDispatch();
   const [opt, setOpt] = useState(false);
-  const [cnfbox, setCnfbox] = useState(false);
   const [detail, setDetail] = useState();
-  const [leads, setLeads] = useState();
-
+  const [optdata, setOptdata] = useState();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(
-          "http://api.sovi.ai/QA/accepted-lead/",
-          {
-            headers: {
-              "Content-type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("access")}`,
-            },
-          }
-        );
-        setLeads(data.records);
-        console.log(data);
+        const { data } = await GetAllAcceptedLeads();
+        dispatch(setAcceptLead(data.records));
       } catch (err) {
         console.log(err);
       }
@@ -38,13 +29,40 @@ const AcceptedLeads = () => {
     fetchData();
   }, []);
 
+  ///////Update Status/////////////
+  const HandleUpdate = async (data) => {
+    const Id = data.id;
+    const payload = {
+      lead_type: data?.type,
+      status: data?.state,
+    };
+    try {
+      const { data } = await UpdateAccepted(Id, payload);
+      toast.success("Successfully Update");
+      try {
+        const { data } = await GetAllAcceptedLeads();
+        dispatch(setAcceptLead(data.records));
+      } catch (err) {
+        console.log(err);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
       <Sidebar />
       <div className="w-10/12 py-8 px-12 pr-16 ">
+        {accptlead.length === 0 && (
+          <div className="w-full h-screen flex items-center justify-center">
+            <div className=" text-gray-300">
+              <i className="fa-solid fa-box fa-4x"></i> <p>No Data</p>
+            </div>
+          </div>
+        )}
         <div className="w-full h-auto mt-4">
           <ul className="">
-            {leads?.map((cur) => {
+            {accptlead?.map((cur) => {
               return (
                 <li
                   className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-2 px-4"
@@ -73,13 +91,16 @@ const AcceptedLeads = () => {
                         Lead ID- {cur?.id}
                       </p>
                     </div>
-                    <div className="flex items-center">
+                    {/* //////Audio/// */}
+                    <div className="">
                       <audio src={cur?.audio} controls></audio>
-                      <div className="flex items-center">
-                        <h1 className="text-sm mx-4 text-green-400 font-semibold">
-                          Accepted
-                        </h1>
-                        <div className="w-full relative">
+                    </div>
+                    <div className="flex items-center relative w-3/12 justify-end ">
+                      <h1 className="text-sm mx-4 text-green-400 font-semibold">
+                        Accepted
+                      </h1>
+                      <div className="flex relative items-center">
+                        <div className="relative">
                           <button
                             className={`px-2 p-1 rounded ${
                               cur?.lead_type === "Hot"
@@ -94,10 +115,67 @@ const AcceptedLeads = () => {
 
                           <i
                             className="fa-solid fa-ellipsis-vertical cursor-pointer px-4 text-xl"
-                            onClick={() => setOpt(!opt)}
+                            onClick={() => setOpt(cur.id)}
                           ></i>
+                          <div className=" absolute h-40 bg-red-300"></div>
                         </div>
                       </div>
+                      <OutsideClickHandler
+                        onOutsideClick={() => setOpt(!cur.id)}
+                      >
+                        <div
+                          className={`p-2 top-6 right-6 flex flex-col absolute items-start bg-white shadow z-10 rounded h-auto accept_Lead ${
+                            opt === cur.id ? "block" : "hidden"
+                          }`}
+                        >
+                          <div className="relative">
+                            <button
+                              onClick={() => {
+                                HandleUpdate({
+                                  id: cur.id,
+                                  type: cur.lead_type,
+                                  state: "Pending",
+                                });
+                              }}
+                            >
+                              Undo
+                            </button>
+                            <button
+                              onClick={() => {
+                                HandleUpdate({
+                                  id: cur.id,
+                                  type: "Hot",
+                                  state: "Accepted",
+                                });
+                              }}
+                            >
+                              Change to Hot
+                            </button>
+                            <button
+                              onClick={() => {
+                                HandleUpdate({
+                                  id: cur.id,
+                                  type: "Premium",
+                                  state: "Accepted",
+                                });
+                              }}
+                            >
+                              Change to Premium
+                            </button>
+                            <button
+                              onClick={() => {
+                                HandleUpdate({
+                                  id: cur.id,
+                                  type: "Basic",
+                                  state: "Accepted",
+                                });
+                              }}
+                            >
+                              Change to Basic
+                            </button>
+                          </div>
+                        </div>
+                      </OutsideClickHandler>
                     </div>
                   </div>
                   {detail == cur ? (
@@ -125,38 +203,44 @@ const AcceptedLeads = () => {
                   )}
                   {/* ////////////Dropdown///////////active////////////// */}
                   <div
-                    className={`  w-full mt-1 ${
+                    className={` ${
                       detail === cur ? "block" : "hidden"
-                    } `}
+                    } w-full mt-1`}
                   >
-                    <div className="flex items-center">
-                      <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                        7 or 8th floor
-                      </div>
-                      <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                        To buy
-                      </div>
-                      <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                        Society with children park
-                      </div>
-                      <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                        Parking space
-                      </div>
-                      <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                        3 BHK
-                      </div>
-                    </div>
+                    <PropertyDetails
+                      comm={cur?.commercial}
+                      res={cur?.residential}
+                      bhk={cur?.bhk_option}
+                      other={cur?.other_property_type}
+                      sqft={cur?.sqrft}
+                    />
                     <div className="w-8/12 flex mt-4 text-sm">
                       <h1 className="text-base font-semibold mr-2">Note-</h1>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Pellentesque sed varius ipsum, est. Aenean ultrices
-                      ullamcorper dolor pharetra. In lorem et eros, maecenas
-                      vestibulum, in interdum.
+                      {cur.notes}
+                    </div>
+                    <div
+                      className={`w-8/12 relative rounded flex-wrap overflow-hidden text-xs flex 
+                            px-2 my-2 justify-items-start gap-y-1 p-1.5 bg-gray-700 text-white ${
+                              cur?.aminities?.length <= 0 ? "hidden" : "block"
+                            }
+                   `}
+                    >
+                      {cur.aminities.map((e, index) => {
+                        return (
+                          <div
+                            className="text-white flex items-center pr-4"
+                            key={index}
+                          >
+                            <div>{e}</div>
+                          </div>
+                        );
+                      })}
+                      {cur?.aminities?.length == 0 ? "No Amenities" : ""}
                     </div>
                     <div className=" flex items-center justify-between mt-2">
                       <h1 className=" font-semibold">
                         Budget-{" "}
-                        <span className="text-blue-700">50-70 lakhs</span>{" "}
+                        <span className="text-blue-700">{cur.budget}</span>{" "}
                       </h1>
                     </div>
                   </div>

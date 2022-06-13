@@ -12,6 +12,7 @@ const Audio = dynamic(() => import("../../components/Audio/index"), {
   ssr: false,
 });
 import Cookies from "js-cookie";
+import PropertyDetails from "../../components/PropertyDetails";
 
 function Allleads() {
   const dispatch = useDispatch();
@@ -29,13 +30,13 @@ function Allleads() {
       try {
         const { data } = await GetAllLeads();
         dispatch(setLeads(data.records));
+        console.log(data.records);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
   }, [dispatch]);
-
   const handleAccept = async (data) => {
     const payload = {
       lead_type: data.lead_type,
@@ -46,12 +47,12 @@ function Allleads() {
     try {
       const { data } = await axios.put(
         `http://api.sovi.ai/QA/lead-update/${id}`,
-        { id, payload },
+        payload,
         {
           headers: {
+            Authorization: `Bearer ${Cookies.get("access")}`,
             "Content-type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("access")}`,
           },
         }
       );
@@ -68,18 +69,15 @@ function Allleads() {
       status: "Rejected",
       notes: message,
     };
-
-    console.log(Cookies.get("access"));
-
     try {
       const { data } = await axios.put(
         `http://api.sovi.ai/QA/lead-update/${id}`,
-        { id, payload },
+        payload,
         {
           headers: {
+            Authorization: `Bearer ${Cookies.get("access")}`,
             "Content-type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("access")}`,
           },
         }
       );
@@ -89,7 +87,6 @@ function Allleads() {
       console.log(err);
     }
   };
-  console.log(leads);
   function fetchData() {
     console.log("hello");
   }
@@ -105,204 +102,227 @@ function Allleads() {
           //   height={300}
         >
           <div className="w-full min-h-screen mt-4">
-            <div className="w-full h-auto">
-              <ul className="">
-                {leads?.map((cur) => {
-                  return (
-                    <li
-                      className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-2 px-4"
-                      key={cur.id}
-                    >
-                      <div className="flex w-full items-center justify-between">
-                        <div>
-                          <div className="flex items-center">
-                            <Image
-                              src="/images/user_profile.svg"
-                              width={40}
-                              height={40}
-                              alt=""
-                            />{" "}
-                            <div className="ml-4">
-                              <p>
-                                {cur.full_name}
-                                <span className=" text-blue-500">
-                                  {" "}
-                                  {cur.rating}/5
-                                </span>
-                                <i className="fa-solid fa-star text-sm text-yellow-400"></i>
-                              </p>
-                              <p>98765********</p>
+            {leads.length <= 0 ? (
+              <div className="w-full h-screen flex items-center justify-center">
+                <div className=" text-gray-300">
+                  <i className="fa-solid fa-box fa-4x"></i> <p>No Data</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-auto">
+                <ul className="">
+                  {leads?.map((cur) => {
+                    return (
+                      <li
+                        className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-4 px-8"
+                        key={cur.id}
+                      >
+                        <div className="flex w-full items-center justify-between">
+                          <div>
+                            <div className="flex items-center">
+                              <Image
+                                src="/images/user_profile.svg"
+                                width={40}
+                                height={40}
+                                alt=""
+                              />{" "}
+                              <div className="ml-4">
+                                <p>
+                                  {cur.full_name}
+                                  <span className=" text-blue-500">
+                                    {" "}
+                                    {cur.rating}/5
+                                  </span>
+                                  <i className="fa-solid fa-star text-sm text-yellow-400"></i>
+                                </p>
+                                <p>98765********</p>
+                              </div>
+                              <br />
                             </div>
-                            <br />
+                            <p className=" leading-4 text-xs text-gray-700">
+                              Lead ID- {cur.id}
+                            </p>
                           </div>
-                          <p className=" leading-4 text-xs text-gray-700">
-                            Lead ID- {cur.id}
-                          </p>
-                        </div>
-                        <div className="flex items-center">
-                          <audio src={cur.audio} controls></audio>
+                          <div className="flex items-center">
+                            <audio src={cur.audio} controls></audio>
 
-                          {accepted?.includes(cur) && (
-                            <div className={`flex items-center ml-2 `}>
-                              <h1 className="mr-2 font-semibold text-sm text-green-500">
-                                Accepted
-                              </h1>
-                              <button
-                                className="px-4 p-1 rounded bg-green-500 text-white text-sm mr-2"
-                                onClick={() => {
-                                  handleAccept({
-                                    id: cur.id,
-                                    lead_type: "Hot",
-                                  });
-                                }}
-                              >
-                                Hot
-                              </button>
-                              <button
-                                className="px-2 p-1 rounded bg-orange-400 text-white text-sm mr-2"
-                                onClick={() => {
-                                  handleAccept({
-                                    id: cur.id,
-                                    lead_type: "Premium",
-                                  });
-                                }}
-                              >
-                                Premium
-                              </button>
-                              <button
-                                className="px-2 p-1 rounded bg-[#E96E6E] text-white text-sm"
-                                onClick={() => {
-                                  handleAccept({
-                                    id: cur.id,
-                                    lead_type: "Basic",
-                                  });
-                                }}
-                              >
-                                Basic
-                              </button>
-                            </div>
-                          )}
-
-                          {rejected.includes(cur) && (
-                            <div className=" flex items-center min-w-[192px] justify-around">
-                              <span
-                                className={`text-red-500 text-sm font-semibold`}
-                              >
-                                Rejected
-                              </span>
-                              <button
-                                className={`p-2 py-1 border rounded border-black ${
-                                  notes?.includes(cur.id) ? "hidden" : "block"
-                                }`}
-                                onClick={() => setNote([cur.id, ...notes])}
-                              >
-                                Add Note
-                              </button>
-                              <div
-                                className={`flex flex-col items-end ${
-                                  notes.includes(cur.id) ? "block" : "hidden"
-                                }`}
-                              >
-                                <textarea
-                                  value={message}
-                                  onChange={(e) => setMessage(e.target.value)}
-                                  className="mt-10 h-9 ml-6 focus:outline-none border border-black rounded"
-                                ></textarea>{" "}
+                            {accepted?.includes(cur) && (
+                              <div className={`flex items-center ml-2 `}>
+                                <h1 className="mr-2 font-semibold text-sm text-green-500">
+                                  Accepted
+                                </h1>
                                 <button
-                                  onClick={() => handleReject(cur.id)}
-                                  className="text-xs mt-4 font-semibold text-white bg-prime-red p-1 px-4 rounded-full"
+                                  className="px-4 p-1 rounded bg-green-500 text-white text-sm mr-2"
+                                  onClick={() => {
+                                    handleAccept({
+                                      id: cur.id,
+                                      lead_type: "Hot",
+                                    });
+                                  }}
                                 >
-                                  Submit
+                                  Hot
+                                </button>
+                                <button
+                                  className="px-2 p-1 rounded bg-orange-400 text-white text-sm mr-2"
+                                  onClick={() => {
+                                    handleAccept({
+                                      id: cur.id,
+                                      lead_type: "Premium",
+                                    });
+                                  }}
+                                >
+                                  Premium
+                                </button>
+                                <button
+                                  className="px-2 p-1 rounded bg-[#E96E6E] text-white text-sm"
+                                  onClick={() => {
+                                    handleAccept({
+                                      id: cur.id,
+                                      lead_type: "Basic",
+                                    });
+                                  }}
+                                >
+                                  Basic
                                 </button>
                               </div>
-                              <i
-                                className="cursor-pointer fa-solid fa-xmark text-lg ml-2"
-                                onClick={() => {
-                                  setCancel(false);
-                                  setNote(false);
-                                }}
-                              ></i>
-                            </div>
-                          )}
+                            )}
 
-                          {accepted?.includes(cur) ||
-                          rejected?.includes(cur) ? (
-                            ""
-                          ) : (
-                            <div className="flex items-center cursor-pointer ">
-                              <div
-                                className="mx-4 flex items-center flex-col"
-                                onClick={() => {
-                                  setAccepted([cur, ...accepted]);
-                                }}
-                              >
-                                <i className="fa-solid fa-circle-check text-green-400 hover:text-green-500 text-[1.6rem]"></i>
-                                <span className="text-sm text-gray-600">
-                                  Accept
+                            {rejected?.includes(cur) && (
+                              <div className="flex items-center min-w-[192px] justify-around">
+                                <span
+                                  className={`text-red-500 text-sm font-semibold`}
+                                >
+                                  Rejected
                                 </span>
+                                <button
+                                  className={`p-2 py-1 border rounded border-black ${
+                                    notes?.includes(cur.id) ? "hidden" : "block"
+                                  }`}
+                                  onClick={() => setNote([cur.id, ...notes])}
+                                >
+                                  Add Note
+                                </button>
+                                <div
+                                  className={`flex flex-col items-end ${
+                                    notes.includes(cur.id) ? "block" : "hidden"
+                                  }`}
+                                >
+                                  <textarea
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    className="mt-10 h-9 ml-6 focus:outline-none border border-black rounded"
+                                  ></textarea>{" "}
+                                  <button
+                                    onClick={() => handleReject(cur.id)}
+                                    className="text-xs mt-4 font-semibold text-white bg-prime-red p-1 px-4 rounded-full"
+                                  >
+                                    Submit
+                                  </button>
+                                </div>
+                                <i
+                                  className="cursor-pointer fa-solid fa-xmark text-lg ml-2"
+                                  onClick={() =>
+                                    setRejected(
+                                      rejected?.filter((e) => cur.id != e.id)
+                                    )
+                                  }
+                                ></i>
                               </div>
-                              <div
-                                className="flex flex-col items-center"
-                                onClick={() => setRejected([cur, ...rejected])}
-                              >
-                                <i className="fa-solid fa-circle-xmark text-[1.65rem] text-red-400 hover:text-red-500"></i>
-                                <span className="text-sm text-gray-600 mb-1">
-                                  Reject
-                                </span>
+                            )}
+
+                            {accepted?.includes(cur) ||
+                            rejected?.includes(cur) ? (
+                              ""
+                            ) : (
+                              <div className="flex items-center cursor-pointer ">
+                                <div
+                                  className="mx-4 flex items-center flex-col"
+                                  onClick={() => {
+                                    setAccepted([cur, ...accepted]);
+                                  }}
+                                >
+                                  <i className="fa-solid fa-circle-check text-green-400 hover:text-green-500 text-[1.6rem]"></i>
+                                  <span className="text-sm text-gray-600">
+                                    Accept
+                                  </span>
+                                </div>
+                                <div
+                                  className="flex flex-col items-center"
+                                  onClick={() =>
+                                    setRejected([cur, ...rejected])
+                                  }
+                                >
+                                  <i className="fa-solid fa-circle-xmark text-[1.65rem] text-red-400 hover:text-red-500"></i>
+                                  <span className="text-sm text-gray-600 mb-1">
+                                    Reject
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="w-full flex justify-end items-end">
-                        <h1
-                          className="text-blue-500 cursor-pointer"
-                          onClick={() => setDetails(cur)}
+                        <div className="w-full flex justify-end items-end">
+                          <h1
+                            className="text-blue-500 text-sm cursor-pointer"
+                            onClick={() => setDetails(cur)}
+                          >
+                            View All Details
+                          </h1>
+                        </div>
+
+                        {/* ////////View All Details/////////// */}
+                        <div
+                          className={` ${
+                            detail === cur ? "block" : "hidden"
+                          } w-full mt-1`}
                         >
-                          View All Details
-                        </h1>
-                      </div>
-
-                      {/* ////////View All Details/////////// */}
-                      <div
-                        className={` ${
-                          detail === cur ? "block" : "hidden"
-                        } w-full mt-4`}
-                      >
-                        <div className="flex items-center">
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            7 or 8th floor
+                          <PropertyDetails
+                            comm={cur?.commercial}
+                            res={cur?.residential}
+                            bhk={cur?.bhk_option}
+                            other={cur?.other_property_type}
+                            sqft={cur?.sqrft}
+                          />
+                          <div className="w-8/12 flex mt-4 text-sm">
+                            <h1 className="text-base font-semibold mr-2">
+                              Note-
+                            </h1>
+                            {cur.notes}
                           </div>
-                          {cur?.aminities?.map((e, i) => (
-                            <div
-                              key={i}
-                              className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500"
-                            >
-                              {e}
-                            </div>
-                          ))}
-                          <div className="p-1 px-4 bg-white border-[1.3px] rounded-full mr-4 border-violet-500">
-                            3 BHK
+                          <div
+                            className={`w-8/12 relative rounded flex-wrap overflow-hidden text-xs flex 
+                            px-2 my-2 justify-items-start gap-y-1 p-1.5 bg-gray-700 text-white ${
+                              cur?.aminities?.length <= 0 ? "hidden" : "block"
+                            }
+                   `}
+                          >
+                            {cur.aminities.map((e, index) => {
+                              return (
+                                <div
+                                  className="text-white flex items-center pr-4"
+                                  key={index}
+                                >
+                                  <div>{e}</div>
+                                </div>
+                              );
+                            })}
+                            {cur?.aminities?.length == 0 ? "No Amenities" : ""}
+                          </div>
+                          <div className=" flex items-center justify-between mt-2">
+                            <h1 className=" font-semibold">
+                              Budget-{" "}
+                              <span className="text-blue-700">
+                                {cur.budget}
+                              </span>{" "}
+                            </h1>
                           </div>
                         </div>
-                        <div className="w-8/12 flex mt-4 text-sm">
-                          <h1 className="text-base font-semibold mr-2">
-                            Note-
-                          </h1>
-                          {cur.notes}
-                        </div>
-                        <div className=" flex items-center justify-between mt-2">
-                          <h1 className=" font-semibold">
-                            Budget-{" "}
-                            <span className="text-blue-700">{cur.budget}</span>{" "}
-                          </h1>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </InfiniteScroll>
       </div>
