@@ -12,12 +12,14 @@ const api = axios.create({
   },
 });
 
-export const LoginMember = (data) => api.post("/lead/member-login/", data);
 export const GetAllEmployee = () => api.get("/QA/all-employees/");
-export const GetAllAcceptedLeads = () => api.get("/QA/accepted-lead/");
-export const GetAllRejectedLeads = () => api.get("/QA/rejected-lead/");
-export const GetAllLeads = () => api.get("/QA/leads/?page=1");
-export const UpdateLead = (id, data) => api.put(`/QA/lead-update/${id}`, data);
+export const GetAllAcceptedLeads = (value) =>
+  api.get(`/QA/accepted-lead/?page=${value}`);
+export const GetAllRejectedLeads = (value) =>
+  api.get(`/QA/rejected-lead/?page${value}`);
+export const GetAllLeads = (value) => api.get(`/QA/leads/?page=${value}`);
+export const UpdateLead = (id, data) =>
+  api.put(`/QA/edit-empdetail/${id}`, data);
 export const UpdateAccepted = (id, data) =>
   api.put(`/QA/update-accepted-lead/${id}`, data);
 export const UpdateRejectlead = (id, data) =>

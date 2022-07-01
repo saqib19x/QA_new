@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
-import { GetAllEmployee, UpdateEmployee } from "../../services/api";
+import { GetAllEmployee, UpdateLead } from "../../services/api";
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
 import { setEmps } from "../../redux/empSlice";
 import toast from "react-hot-toast";
+import { ProtectedPage } from "../../components/Layout/ProtectedPage";
 
 const Employee = () => {
   const { emp } = useSelector((state) => state.emp);
@@ -35,7 +36,7 @@ const Employee = () => {
   ////////Update Employee Details////////
   const HandleEmpDetails = async (id) => {
     try {
-      const { data } = UpdateEmployee(id, {
+      const { data } = UpdateLead(id, {
         first_name: firstName,
         last_name: lastName,
         phone: mobile,
@@ -47,7 +48,7 @@ const Employee = () => {
     }
   };
   return (
-    <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
+    <div className="flex w-full bg-gray-100 min-h-screen">
       <Sidebar />
 
       <div className="w-10/12 py-8 px-12 pr-16 ">
@@ -123,3 +124,8 @@ const Employee = () => {
 };
 
 export default Employee;
+export const getServerSideProps = ProtectedPage(async (_ctx) => {
+  return {
+    props: {},
+  };
+});
