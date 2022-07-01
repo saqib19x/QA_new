@@ -1,27 +1,31 @@
 import Image from "next/image";
 import { useState } from "react";
-import { LoginMember } from "../services/api";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../redux/authSlice";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const Home = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [userId, setUserId] = useState();
-  const [password, setPassword] = useState();
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      const { data } = await LoginMember({ email: userId, password });
-      dispatch(setAuth(data));
+      const { data } = await axios.post(
+        "http://api.sovi.ai/lead/member-login/",
+        {
+          email: userId,
+          password: password,
+        }
+      );
       Cookies.set("access", data.access);
       Cookies.set("refresh", data.refresh);
       toast.success("Successfully LoggedIn 🎉");
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (err) {
       toast.error(err?.response?.data[0]?.non_field_errors);
     }

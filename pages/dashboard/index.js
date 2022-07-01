@@ -6,23 +6,10 @@ import { GetAllEmployee, GetAllLeads } from "../../services/api";
 import Link from "next/link";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { ProtectedPage } from "../../components/Layout/ProtectedPage";
 
 const Dashboard = () => {
   const [activelead, setActivelead] = useState(0);
-
-  const [detail, setDetails] = useState();
-  const [cancel, setCancel] = useState(false);
-  const [accpt, setAccpt] = useState(false);
-  const [notes, setNote] = useState(false);
-  const [leads, setLeads] = useState();
-
-  const leadType = [
-    { id: 1, title: "All Employees" },
-    { id: 2, title: "All Leads" },
-    { id: 3, title: "Rejected leads" },
-    { id: 4, title: "Accepted leads" },
-  ];
-
   const [empShow, setEmpShow] = useState([]);
 
   useEffect(() => {
@@ -39,7 +26,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="flex w-full mt-16 bg-gray-100 min-h-screen">
+    <div className="flex w-full bg-gray-100 min-h-screen">
       <Sidebar />
 
       <div className="w-10/12 py-8 px-12 pr-16 ">
@@ -101,3 +88,8 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+export const getServerSideProps = ProtectedPage(async (_ctx) => {
+  return {
+    props: {},
+  };
+});

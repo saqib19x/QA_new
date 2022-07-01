@@ -18,7 +18,7 @@ const Navbar = () => {
 
   return (
     <div>
-      <div className="fixed top-0 z-50 w-full h-16 flex items-center  justify-between px-20 p-1.5 bg-[#383A49]">
+      <div className="w-full h-16 flex items-center  justify-between px-20 p-1.5 bg-[#383A49]">
         <Image alt="" src="/images/sovi_main.svg" width={50} height={30} />
         <div className="flex items-center">
           <h3 className=" font-semibold cursor-pointer text-sm mr-2 text-white">

@@ -9,12 +9,12 @@ const Sidebar = () => {
   const leadType = [
     { id: 1, title: "All Employees", goto: "/dashboard" },
     { id: 2, title: "Pending Leads", goto: "/leads/all" },
-    { id: 3, title: "Rejected leads", goto: "/leads/rejected" },
     { id: 4, title: "Accepted leads", goto: "/leads/accepted" },
+    { id: 3, title: "Rejected leads", goto: "/leads/rejected" },
   ];
 
   return (
-    <div className="w-2/12 bg-white diff_lead">
+    <div className="w-2/12 bg-white diff_lead sticky z-20 h-screen">
       <ul className="w-full">
         {leadType.map((Ele) => {
           return (
