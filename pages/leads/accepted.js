@@ -43,7 +43,7 @@ const AcceptedLeads = () => {
       const { data } = await UpdateAccepted(Id, payload);
       toast.success("Successfully Update");
       try {
-        const { data } = await GetAllAcceptedLeads();
+        const { data } = await GetAllAcceptedLeads(page_no);
         dispatch(setAcceptLead(data.records));
       } catch (err) {
         console.log(err);
