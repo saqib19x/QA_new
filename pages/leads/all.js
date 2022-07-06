@@ -19,7 +19,6 @@ function Allleads() {
   const dispatch = useDispatch();
   const { leads } = useSelector((state) => state.leads);
   const [detail, setDetails] = useState();
-  const [cancel, setCancel] = useState(false);
   const [accepted, setAccepted] = useState([]);
   const [rejected, setRejected] = useState([]);
   const [notes, setNote] = useState([]);
@@ -42,7 +41,7 @@ function Allleads() {
     const payload = {
       lead_type: data.lead_type,
       status: "Accepted",
-      notes: "string",
+      notes: data.notes,
     };
     const id = data.id;
     try {
@@ -224,7 +223,6 @@ function Allleads() {
                               }`}
                             >
                               <textarea
-                                value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 className="mt-10 h-9 ml-6 focus:outline-none border border-black rounded"
                               ></textarea>{" "}

@@ -16,7 +16,7 @@ export const GetAllEmployee = () => api.get("/QA/all-employees/");
 export const GetAllAcceptedLeads = (value) =>
   api.get(`/QA/accepted-lead/?page=${value}`);
 export const GetAllRejectedLeads = (value) =>
-  api.get(`/QA/rejected-lead/?page${value}`);
+  api.get(`/QA/rejected-lead/?page=${value}`);
 export const GetAllLeads = (value) => api.get(`/QA/leads/?page=${value}`);
 export const UpdateLead = (id, data) =>
   api.put(`/QA/edit-empdetail/${id}`, data);

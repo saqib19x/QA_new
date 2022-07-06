@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -15,7 +15,9 @@ const Navbar = () => {
     Cookies.remove("refresh");
     router.push("/");
   };
-
+  useEffect(() => {
+    setShow(false);
+  }, [router]);
   return (
     <div>
       <div className="w-full h-16 flex items-center  justify-between px-20 p-1.5 bg-[#383A49]">
@@ -34,6 +36,7 @@ const Navbar = () => {
               src="/images/user_profile.svg"
               width={25}
               height={25}
+              className=" cursor-pointer"
             />
             <div
               className={`w-40 bg-white shadow rounded z-10 h-auto p-4 py-2 absolute top-8 right-0 ${

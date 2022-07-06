@@ -20,7 +20,7 @@ const AcceptedLeads = () => {
   const [page_no, setPage_no] = useState(1);
   const [more, setMore] = useState(true);
   useEffect(() => {
-    const fetchData = async () => {
+    const AcceptedData = async () => {
       try {
         const { data } = await GetAllAcceptedLeads(page_no);
         dispatch(setAcceptLead(data.records));
@@ -29,7 +29,7 @@ const AcceptedLeads = () => {
       }
     };
 
-    fetchData();
+    AcceptedData();
   }, []);
 
   ///////Update Status/////////////
