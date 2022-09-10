@@ -46,7 +46,7 @@ function Allleads() {
     const id = data.id;
     try {
       const { data } = await axios.put(
-        `http://api.sovi.ai/QA/lead-update/${id}`,
+        `https://api.ruta91.com/QA/lead-update/${id}`,
         payload,
         {
           headers: {
@@ -71,7 +71,7 @@ function Allleads() {
     };
     try {
       const { data } = await axios.put(
-        `http://api.sovi.ai/QA/lead-update/${id}`,
+        `https://api.ruta91.com/QA/lead-update/${id}`,
         payload,
         {
           headers: {

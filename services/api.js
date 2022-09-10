@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "http://api.sovi.ai",
+  baseURL: "https://api.ruta91.com",
   headers: {
     "Content-type": "application/json",
     Authorization: `Bearer ${Cookies.get("access")}`,

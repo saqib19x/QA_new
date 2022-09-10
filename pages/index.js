@@ -16,7 +16,7 @@ const Home = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://api.sovi.ai/lead/member-login/",
+        "https://api.ruta91.com/lead/member-login/",
         {
           email: userId,
           password: password,
