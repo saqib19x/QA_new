@@ -33,9 +33,9 @@ const Home = () => {
 
   return (
     <div>
-      <div className="w-full h-screen flex relative">
+      <div className="w-full bg-white h-screen flex relative">
         <div className="m-2 ml-8">
-          <Image src="/images/sovi_black.svg" width={80} height={50} alt="" />
+          <Image src="/images/ruta_logo.svg" width={100} height={50} alt="" />
         </div>
         <div className="w-7/12 h-full bg-white p-20 flex flex-col justify-center">
           <div className=" flex justify-center">
@@ -58,7 +58,7 @@ const Home = () => {
                   type="text"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
-                  className="w-full p-2 border-2 border-gray-300 focus:border-gray-300 rounded focus:outline-none"
+                  className="w-full p-2 border-2 text-black border-gray-300 focus:border-gray-300 rounded focus:outline-none"
                 />
               </div>
               <div className="mt-4 relative">
@@ -67,7 +67,7 @@ const Home = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-2 border-2 border-gray-300 focus:border-gray-300 rounded focus:outline-none"
+                  className="w-full p-2 border-2 text-black border-gray-300 focus:border-gray-300 rounded focus:outline-none"
                 />
               </div>
               <button className=" w-full bg-blue-700 hover:bg-blue-500 font-semibold text-lg text-white py-2 rounded mt-8">
@@ -76,7 +76,7 @@ const Home = () => {
             </form>
           </div>
         </div>
-        <div className="w-5/12 h-full bg-login_bg  bg-cover bg-center bg-no-repeat"></div>
+        <div className="w-5/12 h-full bg-[url(/images/loginBg.png)]  bg-cover bg-center bg-no-repeat"></div>
       </div>
     </div>
   );
