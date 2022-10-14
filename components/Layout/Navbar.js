@@ -11,8 +11,8 @@ const Navbar = () => {
   const router = useRouter();
 
   const LogOut = () => {
-    Cookies.remove("access");
-    Cookies.remove("refresh");
+    Cookies.remove("access",{path: '' });
+    Cookies.remove("refresh",{path: '' });
     router.push("/");
   };
   useEffect(() => {
@@ -44,7 +44,7 @@ const Navbar = () => {
               }`}
               onMouseLeave={() => setShow(false)}
             >
-              <p className=" cursor-pointer" onClick={LogOut}>
+              <p className=" cursor-pointer text-gray-500" onClick={LogOut}>
                 Logout
               </p>
             </div>

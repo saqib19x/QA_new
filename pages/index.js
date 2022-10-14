@@ -15,8 +15,7 @@ const Home = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "https://api.ruta91.com/lead/member-login/",
+      const { data } = await axios.post("http://43.205.216.194:8000/lead/member-login/",
         {
           email: userId,
           password: password,
@@ -24,7 +23,7 @@ const Home = () => {
       );
       Cookies.set("access", data.access);
       Cookies.set("refresh", data.refresh);
-      toast.success("Successfully LoggedIn 🎉");
+      toast.success("Successfully LoggedIn 🎉", {autoClose: 1,});
       router.replace("/dashboard");
     } catch (err) {
       toast.error(err?.response?.data[0]?.non_field_errors);

@@ -31,7 +31,7 @@ const Dashboard = () => {
 
       <div className="w-10/12 py-8 px-12 pr-16 ">
         <div className="w-full flex items-center justify-between mt-4">
-          <h1 className="text-lg font-semibold">
+          <h1 className="text-lg font-semibold text-gray-500">
             {activelead == 1
               ? "All Employees"
               : activelead == 2

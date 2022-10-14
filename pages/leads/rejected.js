@@ -12,15 +12,15 @@ const RejectedLeads = () => {
   const [leads, setLeads] = useState([]);
   const [page_no, setPage_no] = useState(1);
   const [more, setMore] = useState(true);
+  const RejectLeadData = async () => {
+    try {
+      const { data } = await GetAllRejectedLeads(page_no);
+      setLeads(data.records);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
-    const RejectLeadData = async () => {
-      try {
-        const { data } = await GetAllRejectedLeads(page_no);
-        setLeads(data.records);
-      } catch (err) {
-        console.log(err);
-      }
-    };
     RejectLeadData();
   }, []);
   //////////Handle Undo/////////////
@@ -28,12 +28,7 @@ const RejectedLeads = () => {
     try {
       const { data } = await UpdateRejectlead(id, { status: "Pending" });
       toast.success("Successfully Update");
-      try {
-        const { data } = await GetAllRejectedLeads();
-        setLeads(data.records);
-      } catch (err) {
-        console.log(err);
-      }
+      RejectLeadData();
     } catch (err) {
       console.log(err);
     }
@@ -118,7 +113,7 @@ const RejectedLeads = () => {
                             Rejected
                           </h1>
                           <div className="w-40 h-10 border border-black rounded p-1 overflow-hidden text-xs">
-                            {cur.notes}
+                            {cur.qa_notes}
                           </div>
                           <div
                             className="tooltip tooltip-bottom"

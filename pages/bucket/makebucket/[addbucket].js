@@ -1,127 +1,130 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { GetAllLeads, UpdateLead, updatePendingStatus } from "../../services/api";
-import Sidebar from "../../components/Layout/Sidebar";
-import dynamic from "next/dist/shared/lib/dynamic";
+import React,{useState,useEffect} from 'react'
+import Sidebar from '../../../components/Layout/Sidebar'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import Cookies from "js-cookie";
+import PropertyDetails from '../../../components/PropertyDetails';
 import { useDispatch, useSelector } from "react-redux";
-import { setLeads } from "../../redux/leadSlice";
 import axios from "axios";
 import toast from "react-hot-toast";
-import InfiniteScroll from "react-infinite-scroll-component";
-const Audio = dynamic(() => import("../../components/Audio/index"), {
-  ssr: false,
-});
-import Cookies from "js-cookie";
-import { ProtectedPage } from "../../components/Layout/ProtectedPage";
-import PropertyDetails from "../../components/PropertyDetails";
-
-function Allleads() {
+import { acceptedBucketlead, GetAllLeads, getBuketDetails, updatePendingStatus } from '../../../services/api';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+const Addbucket = () => {
   const dispatch = useDispatch();
-  const { leads } = useSelector((state) => state.leads);
-  const [detail, setDetails] = useState();
-  const [accepted, setAccepted] = useState([]);
-  const [rejected, setRejected] = useState([]);
-  const [notes, setNote] = useState([]);
-  const [message, setMessage] = useState();
-  const [more, setMore] = useState(true);
-  const [page_no, setPage_no] = useState(1);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await GetAllLeads(page_no);
-        dispatch(setLeads(data.records));
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchData();
-  }, [dispatch]);
-  const handleAccept = async (data) => {
-    const payload = {
-      lead_type: data.lead_type,
-      status: "Accepted",
-      qa_notes: data.notes,
-    };
-    const id = data.id;
+  const [isvisible,setVisible]=useState({
+    detail:'',accept:'',reject:'', count:{}
+  })
+ const {detail,accept,reject,count}=isvisible;
+  const [leads,setLeadData]=useState([]);
+  const [complete,setComplete]=useState(false);
+  const [more,setMore]=useState(true);
+  const [addnote,setNote]=useState('')
+  const {query}=useRouter();
+  const [opt,setOpt]=useState({
+    id:query.addbucket,
+    camp_name:'None',range:'None',location:'None'
+  })
+  const {id,camp_name,range,location}=opt;
+  const FetchData = async () => {
     try {
-      const { data } = await axios.put(
-        `http://43.205.216.194:8000/QA/lead-update/${id}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("access")}`,
-            "Content-type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
-      dispatch(setLeads(data.records));
-      toast.success("Accepted");
+      const { data } = await getBuketDetails(id,camp_name,range,location);
+      setVisible({...isvisible,count:data.count});
+      setLeadData(data.leads);
+      const newRes= (data?.count?.filled).split("/");
+      if(newRes[0]/newRes[1]==1){
+        setComplete(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    FetchData();
+  }, []);
+  const handleAccept = async (lead_type,ID) => {
+    const payload={
+      bucket_id: count.bucket_id,
+      status: "InBucket",
+      lead_type: lead_type,
+      lead:ID
+    }
+    try {
+      const { data } = await acceptedBucketlead(payload)
+      toast.success("Added to bucket");
+      FetchData();
     } catch (err) {
       toast.error("Error Occured");
-      console.log(err);
     }
   };
 
   const handleReject = async (id) => {
     const payload = {
       status: "Rejected",
-      qa_notes: message,
+      qa_notes: addnote,
     };
     try {
-      const { data } = await updatePendingStatus(id,payload)
-      dispatch(setLeads(data.records));
+      const { data } = await updatePendingStatus(id,payload);
       toast.success("Rejected");
+      FetchData();
     } catch (err) {
       console.log(err);
-    }
-  };
-  const fetchData = async () => {
-    setPage_no((page_no += 1));
-    try {
-      const { data } = await GetAllLeads(page_no);
-      dispatch(setLeads(leads.concat(data.records)));
-    } catch (error) {
-      setMore(false);
+      toast.success("Error Occured");
     }
   };
   return (
-    <div className="flex w-full bg-gray-100 h-screen">
+    <div className="flex w-full bg-gray-100 min-h-screen text-black">
       <Sidebar />
-      <div
-        className="w-10/12 py-8 px-12 pr-16 h-full overflow-auto"
+      <div className='w-9/12 mx-auto pt-8 min-h-screen'>
+        {/* ////////Filter/////////////// */}
+        <div className='flex justify-between items-end'>
+          <div>
+            <h1 className=' text-gray-500 text-base font-semibold'>Campaign Name</h1>
+            <select name="" id="" className=' w-56 p-1 bg-transparent border-[1.5px] rounded mt-1' >
+              op
+            </select>
+          </div>
+          <div>
+            <h1 className=' text-gray-500 text-base font-semibold'>Range</h1>
+            <select name="" id="" className=' w-48 p-1 bg-transparent border-[1.5px] rounded mt-1' >
+              op
+            </select>
+          </div>
+          <div>
+            <h1 className=' text-gray-500 text-base font-semibold'>Location</h1>
+            <select name="" id="" className=' w-56 p-1 bg-transparent border-[1.5px] rounded mt-1' >
+              op
+            </select>
+          </div>
+          <div><button className=' bg-prime-red text-white px-6 rounded p-1'>Submit</button></div>
+        </div>
+        {/* /////////////////////// */}
+        <div className=' w-full relative mt-12'>
+        <Link href='/bucket/makebucket/'><i className="fa-solid fa-arrow-left-long absolute -left-8 text-lg top-0.5 cursor-pointer"></i></Link>
+         <div className='flex items-center gap-4'>
+          <h1 className=' text-lg font-semibold'>Leads </h1>
+          <h3 className=' text-sm text-prime-red font-semibold'>{count?.filled} leads</h3>
+         </div>
+         <div className=' text-right'>12-October-2022</div>
+        </div>
+        <div
+        className="w-full py-4 overflow-auto"
         id="ScrollTarget"
       >
         {leads.length <= 0 && (
-          <div className="w-full h-screen flex items-center justify-center">
+          <div className="w-full h-[60vh] flex items-center justify-center">
             <div className=" text-gray-300">
               <i className="fa-solid fa-box fa-4x"></i> <p>No Data</p>
             </div>
           </div>
         )}
-        <InfiniteScroll
-          dataLength={leads?.length}
-          next={fetchData}
-          hasMore={more}
-          loader={
-            <div
-              className={`w-full text-center ${
-                leads?.length < 20 ? "hidden" : "block"
-              }`}
-            >
-              <p className="text-lg">Loading...</p>
-            </div>
-          }
-          scrollableTarget="ScrollTarget"
-        >
-          <div className="w-full h-full mt-4">
+          <div className="w-full h-full mt-0">
             <ul className="">
-              {leads?.map((cur) => {
+              {leads?.map((cur,i) => {
                 return (
                   <li
                     className="w-full h-auto bg-white shadow-shad_prime rounded-lg mb-4 p-4 px-8"
-                    key={cur.id}
+                    key={i}
                   >
                     <div className="flex w-full items-center justify-between">
                       <div>
@@ -148,74 +151,52 @@ function Allleads() {
                           <br />
                         </div>
                       </div>
+                     
                       <div className="flex items-center">
                         <audio src={cur.audio} controls></audio>
-
-                        {accepted?.includes(cur) && (
+                      </div>
+                      {accept===cur.id && (
                           <div className={`flex items-center ml-2 `}>
                             <h1 className="mr-2 font-semibold text-sm text-green-500">
                               Accepted
                             </h1>
                             <button
                               className="px-4 p-1 rounded bg-green-500 text-white text-sm mr-2"
-                              onClick={() => {
-                                handleAccept({
-                                  id: cur.id,
-                                  lead_type: "Hot",
-                                });
-                              }}
+                              onClick={() =>handleAccept('Hot',cur.id)}
                             >
                               Hot
                             </button>
                             <button
                               className="px-2 p-1 rounded bg-orange-400 text-white text-sm mr-2"
-                              onClick={() => {
-                                handleAccept({
-                                  id: cur.id,
-                                  lead_type: "Premium",
-                                });
-                              }}
+                              onClick={() =>handleAccept('Premium',cur.id)}
                             >
                               Premium
                             </button>
                             <button
                               className="px-2 p-1 rounded bg-[#E96E6E] text-white text-sm"
-                              onClick={() => {
-                                handleAccept({
-                                  id: cur.id,
-                                  lead_type: "Basic",
-                                });
-                              }}
+                              onClick={() =>handleAccept('Basic',cur.id)}
                             >
                               Basic
                             </button>
                           </div>
                         )}
 
-                        {rejected?.includes(cur) && (
+                        {reject===cur.id && (
                           <div className="flex items-center min-w-[192px] justify-around">
                             <span
                               className={`text-red-500 text-sm font-semibold`}
                             >
                               Rejected
                             </span>
-                            <button
-                              className={`p-2 py-1 border rounded border-black ${
-                                notes?.includes(cur.id) ? "hidden" : "block"
-                              }`}
-                              onClick={() => setNote([cur.id, ...notes])}
-                            >
-                              Add Note
-                            </button>
                             <div
                               className={`flex flex-col items-end ${
-                                notes.includes(cur.id) ? "block" : "hidden"
+                               reject ? "block" : "hidden"
                               }`}
                             >
                               <textarea
-                                onChange={(e) => setMessage(e.target.value)}
-                                className="mt-10 h-9 ml-6 focus:outline-none border border-black rounded"
-                              ></textarea>{" "}
+                                onChange={(e) => setNote(e.target.value)}
+                                className="mt-10 h-10 ml-6 focus:outline-none border border-black rounded"
+                              ></textarea>
                               <button
                                 onClick={() => handleReject(cur.id)}
                                 className="text-xs mt-4 font-semibold text-white bg-prime-red p-1 px-4 rounded-full"
@@ -225,24 +206,18 @@ function Allleads() {
                             </div>
                             <i
                               className="cursor-pointer fa-solid fa-xmark text-lg ml-2"
-                              onClick={() =>
-                                setRejected(
-                                  rejected?.filter((e) => cur.id != e.id)
-                                )
-                              }
+                              onClick={() =>setVisible({reject:!cur.id}) }
                             ></i>
                           </div>
                         )}
 
-                        {accepted?.includes(cur) || rejected?.includes(cur) ? (
+                        {accept===cur.id || reject===cur.id ? (
                           ""
                         ) : (
                           <div className="flex items-center cursor-pointer ">
                             <div
                               className="mx-4 flex items-center flex-col"
-                              onClick={() => {
-                                setAccepted([cur, ...accepted]);
-                              }}
+                              onClick={() => {setVisible({...isvisible, accept:cur.id})}}
                             >
                               <i className="fa-solid fa-circle-check text-green-400 hover:text-green-500 text-[1.6rem]"></i>
                               <span className="text-sm text-gray-600">
@@ -251,7 +226,7 @@ function Allleads() {
                             </div>
                             <div
                               className="flex flex-col items-center"
-                              onClick={() => setRejected([cur, ...rejected])}
+                              onClick={() => {setVisible({...isvisible,reject:cur.id})}}
                             >
                               <i className="fa-solid fa-circle-xmark text-[1.65rem] text-red-400 hover:text-red-500"></i>
                               <span className="text-sm text-gray-600 mb-1">
@@ -260,36 +235,17 @@ function Allleads() {
                             </div>
                           </div>
                         )}
-                      </div>
                     </div>
-                    {detail == cur ? (
-                      <div
-                        className="text-blue-700 cursor-pointer flex justify-end items-center pt-1"
-                        onClick={() => setDetails(!cur)}
-                      >
-                        View all details{" "}
-                        <i
-                          className={`fa-solid fa-angle-up ml-1
-                      }`}
-                        ></i>
-                      </div>
-                    ) : (
-                      <div
-                        className="text-blue-700 cursor-pointer flex justify-end items-center pt-1"
-                        onClick={() => setDetails(cur)}
-                      >
-                        View all details{" "}
-                        <i
-                          className={`fa-solid fa-angle-down ml-1
-                      }`}
-                        ></i>
-                      </div>
-                    )}
+                  <div className='flex justify-between pl-14'>
+                    <h3 className=' font-semibold'>{cur.campaign_name}</h3>
+                    {detail == cur.id ? <button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:cur})}>View Details <i className="fa-solid fa-chevron-down" ></i></button>
+                    :<button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:cur.id})}>View Details <i className="fa-solid fa-chevron-up"></i></button>}
+                  </div>
                     {/* ////////View All Details/////////// */}
                     <div
                       className={` ${
                         detail === cur ? "block" : "hidden"
-                      } w-full mt-1`}
+                      } w-full mt-2`}
                     >
                       <PropertyDetails
                         comm={cur?.commercial}
@@ -323,7 +279,7 @@ function Allleads() {
                       </div>
                       <div className=" flex items-center justify-between mt-2">
                         <h1 className=" font-semibold">
-                          Budget-{" "}
+                          Budget-
                           <span className="text-blue-700">{cur.budget}</span>{" "}
                         </h1>
                       </div>
@@ -333,15 +289,16 @@ function Allleads() {
               })}
             </ul>
           </div>
-        </InfiniteScroll>
       </div>
+     {complete==true && <div className=' text-center'>
+         <button className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red'>Cancel</button>
+         <button className='px-4 p-1 font-semibold ml-6 rounded bg-[#4F81FF] text-white'>Complete Bucket</button>
+      </div>}
+      
+        </div>
     </div>
-  );
+
+  )
 }
 
-export default Allleads;
-export const getServerSideProps = ProtectedPage(async (_ctx) => {
-  return {
-    props: {},
-  };
-});
+export default Addbucket
