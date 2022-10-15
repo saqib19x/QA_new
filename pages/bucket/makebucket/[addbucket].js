@@ -6,7 +6,7 @@ import PropertyDetails from '../../../components/PropertyDetails';
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { acceptedBucketlead, GetAllLeads, getBuketDetails, updatePendingStatus } from '../../../services/api';
+import { acceptedBucketlead, changeBucketStatus, GetAllLeads, getBuketDetails, updatePendingStatus } from '../../../services/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -20,7 +20,7 @@ const Addbucket = () => {
   const [complete,setComplete]=useState(false);
   const [more,setMore]=useState(true);
   const [addnote,setNote]=useState('')
-  const {query}=useRouter();
+  const {query,route}=useRouter();
   const [opt,setOpt]=useState({
     id:query.addbucket,
     camp_name:'None',range:'None',location:'None'
@@ -72,6 +72,19 @@ const Addbucket = () => {
       toast.success("Error Occured");
     }
   };
+  ///////////CompleteBucket//////////
+  const handleComplete=async()=>{
+    try {
+      const { data } = await changeBucketStatus(id,{
+        bucket_status: "Completed"
+      });
+      toast.success("Successfully Completed");
+      route.replace('/bucket/makebucket');
+    } catch (err) {
+      console.log(err);
+      toast.success("Error Occured by");
+    }
+  }
   return (
     <div className="flex w-full bg-gray-100 min-h-screen text-black">
       <Sidebar />
@@ -238,13 +251,13 @@ const Addbucket = () => {
                     </div>
                   <div className='flex justify-between pl-14'>
                     <h3 className=' font-semibold'>{cur.campaign_name}</h3>
-                    {detail == cur.id ? <button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:cur})}>View Details <i className="fa-solid fa-chevron-down" ></i></button>
-                    :<button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:cur.id})}>View Details <i className="fa-solid fa-chevron-up"></i></button>}
+                    {detail === cur.id ? <button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:!cur.id})}>View Details <i className="fa-solid fa-chevron-up" ></i></button>
+                    :<button className=' text-[#2D59F3]' onClick={()=>setVisible({...isvisible, detail:cur.id})}>View Details <i className="fa-solid fa-chevron-down"></i></button>}
                   </div>
                     {/* ////////View All Details/////////// */}
                     <div
                       className={` ${
-                        detail === cur ? "block" : "hidden"
+                        detail === cur.id ? "block" : "hidden"
                       } w-full mt-2`}
                     >
                       <PropertyDetails
@@ -291,8 +304,8 @@ const Addbucket = () => {
           </div>
       </div>
      {complete==true && <div className=' text-center'>
-         <button className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red'>Cancel</button>
-         <button className='px-4 p-1 font-semibold ml-6 rounded bg-[#4F81FF] text-white'>Complete Bucket</button>
+         <button className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red' onClick={()=>setComplete(false)}>Cancel</button>
+         <button className='px-4 p-1 font-semibold ml-6 rounded bg-[#4F81FF] text-white' onClick={handleComplete}>Complete Bucket</button>
       </div>}
       
         </div>

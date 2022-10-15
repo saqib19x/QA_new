@@ -9,19 +9,18 @@ import { useRouter } from 'next/router';
 const Details = () => {
    const [viewDetail,setView]=useState()
    const [Data,setData]=useState({
+      bucket_data:{},
       bucket_leads:[]
    });
-   const {bucket_leads}=Data;
+   const {bucket_leads,bucket_data}=Data;
    const {query}=useRouter()
    const id = query.details;
-   console.log(id)
    useEffect(()=>{
       if(id){
             (async()=>{
       try {
          const { data } = await getCompBucketDetail(id)
-         setData({...Data,bucket_leads:data.bucket_leads})
-         console.log(bucket_leads)
+         setData({bucket_data:data.bucket_data,bucket_leads:data.bucket_leads});
        } catch (err) {
          toast.error("Error Occured");
        }
@@ -29,6 +28,7 @@ const Details = () => {
       }
 
    },[id])
+   console.log(Data)
   return (
     <div className="flex w-full bg-gray-100 text-black">
       <Sidebar />
@@ -37,21 +37,21 @@ const Details = () => {
         <Link href='/bucket/mybucket/'><i className="fa-solid fa-arrow-left-long absolute -left-8 text-lg top-0.5 cursor-pointer"></i></Link>
         </div>
         <h1 className=' text-xl font-semibold'>My buckets </h1>
-        <div className=' text-right'> Bought on - <span className=' font-semibold'>14 Dec 2021</span> </div>
+        <div className=' text-right'> Bought on - <span className=' font-semibold'>{bucket_data?.buyed_at}</span> </div>
         {/* //////////////// */}
         <div className='w-full bg-white mt-2'>
         <div className='px-6 p-4'>
         <div className='flex justify-between'>
-          <h3 className=' text-lg font-semibold'>Agrawal Apartments</h3>
-          <h3>Transaction ID - <span className=' font-bold'>11WS2480643H</span></h3>
+          <h3 className=' text-lg font-semibold'>{bucket_data.bucket_name}</h3>
+          <h3>Transaction ID - <span className=' font-bold'>{bucket_data?.razorpay_order_id}</span></h3>
          </div> 
          <div className='flex items-center gap-4 mt-2'>
-            <h3>25 leads</h3>
-            <h3>Paid - <span className=' font-bold text-prime_blue'>₹5,000</span></h3>
+            <h3>{bucket_data?.bucket_size} leads</h3>
+            <h3>Paid - <span className=' font-bold text-prime_blue'>₹ {bucket_data?.amount}</span></h3>
          </div>
         </div>
         {/* /////////////////DAta Show/////////// */}
-        <div className='px-12 border p-8 h-[70vh]'>
+        <div className='px-12 border p-8 h-[70vh] overflow-y-auto'>
          {bucket_leads.map(Ele=>{
             return (
                   <div className='w-full bg-white shadow border rounded'>
@@ -92,11 +92,11 @@ const Details = () => {
             </div>
          </div>
          <div>
-            {viewDetail==Ele.id ? <button className='mt-2' onClick={()=>setView(Ele.id)}><i class="fa-solid fa-chevron-right"></i></button>:
-            <button className='mt-2' onClick={()=>setView(!Ele.id)}><i class="fa-solid fa-chevron-right"></i></button>}
+            {viewDetail==Ele.id ? <button className='mt-2' onClick={()=>setView(!Ele.id)}><i class="fa-solid fa-chevron-down"></i></button>:
+            <button className='mt-2' onClick={()=>setView(Ele.id)}><i class="fa-solid fa-chevron-right"></i></button>}
             </div>
         </div>
-        {viewDetail==Ele.id && <Tiledetais/>}
+        {viewDetail===Ele.id && <Tiledetais Ele={Ele}/>}
         
         </div>
             )

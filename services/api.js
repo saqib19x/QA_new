@@ -40,7 +40,8 @@ export default api;
 
 export const acceptedBucketlead = (data) =>
   api.post(`/QA/add-to-bucket/`, data);
-
+  export const changeBucketStatus = (id,data) =>
+  api.put(`/QA/change-bucket-status/${id}`,data);
   ////////////Complete Bucket///////////
   export const completeBucketGet = (data) =>{
     if(data){
