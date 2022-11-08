@@ -31,9 +31,9 @@ const Index = () => {
             </select>
                  </div>
         </div>
-        {bucketdata.map(Ele=>{
+        {bucketdata.map((Ele, ind)=>{
          return (
-             <div className='w-full  mt-4 bg-white border rounded'>
+             <div className='w-full  mt-4 bg-white border rounded' key={ind}>
         <div className='flex px-4 p-3 justify-between '>
          <div>
             <h3 className='text-lg font-bold'>{Ele.bucket_name}</h3>
@@ -64,7 +64,7 @@ const Index = () => {
          </div>
           {/* ////// */}
           <div>
-            <div className='flex items-start gap-2'><i class="fa-solid fa-house text-lg"></i>
+            <div className='flex items-start gap-2'><i className="fa-solid fa-house text-lg"></i>
             <div className=' text-base font-bold'>Apartments
             <p className='text-sm font-normal text-gray-500'>Status</p>
             </div> 

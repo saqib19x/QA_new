@@ -52,9 +52,9 @@ const Details = () => {
         </div>
         {/* /////////////////DAta Show/////////// */}
         <div className='px-12 border p-8 h-[70vh] overflow-y-auto'>
-         {bucket_leads.map(Ele=>{
+         {bucket_leads.map((Ele, inde)=>{
             return (
-                  <div className='w-full bg-white shadow border rounded'>
+                  <div className='w-full bg-white shadow border rounded' key={inde}>
         <div className='flex  justify-between px-6 p-3'>
         <div className="flex gap-3">
                           <Image
@@ -92,8 +92,8 @@ const Details = () => {
             </div>
          </div>
          <div>
-            {viewDetail==Ele.id ? <button className='mt-2' onClick={()=>setView(!Ele.id)}><i class="fa-solid fa-chevron-down"></i></button>:
-            <button className='mt-2' onClick={()=>setView(Ele.id)}><i class="fa-solid fa-chevron-right"></i></button>}
+            {viewDetail==Ele.id ? <button className='mt-2' onClick={()=>setView(!Ele.id)}><i className="fa-solid fa-chevron-down"></i></button>:
+            <button className='mt-2' onClick={()=>setView(Ele.id)}><i className="fa-solid fa-chevron-right"></i></button>}
             </div>
         </div>
         {viewDetail===Ele.id && <Tiledetais Ele={Ele}/>}

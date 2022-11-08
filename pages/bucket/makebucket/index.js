@@ -63,7 +63,7 @@ const Index = () => {
          </div>
           {/* ////// */}
           <div>
-            <div className='flex items-start gap-2'><i class="fa-solid fa-house text-lg"></i>
+            <div className='flex items-start gap-2'><i className="fa-solid fa-house text-lg"></i>
             <div className=' text-base font-bold'>{Ele.property_status}
             <p className='text-sm font-normal text-gray-500'>Status</p>
             </div> 
