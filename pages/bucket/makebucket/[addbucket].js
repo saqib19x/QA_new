@@ -319,7 +319,8 @@ const Addbucket = () => {
       <div className=' text-center'>
          <button 
          className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red' 
-         onClick={()=>setComplete(false)}>
+         onClick={()=>setComplete(false)}
+         >
           Cancel
           </button>
          <button 
