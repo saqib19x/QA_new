@@ -10,7 +10,9 @@ import { acceptedBucketlead, changeBucketStatus, GetAllLeads, getBuketDetails, u
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 const Addbucket = () => {
+
   const dispatch = useDispatch();
   const [isvisible,setVisible]=useState({
     detail:'',accept:'',reject:'', count:{}
@@ -26,14 +28,23 @@ const Addbucket = () => {
     camp_name:'None',range:'None',location:'None'
   })
   const {id,camp_name,range,location}=opt;
+
   const FetchData = async () => {
     try {
       const { data } = await getBuketDetails(id,camp_name,range,location);
-      setVisible({...isvisible,count:data.count});
-      setLeadData(data.leads);
-      const newRes= (data?.count?.filled).split("/");
-      if(newRes[0]/newRes[1]==1){
+      
+      console.log("data===>", data);
+      setVisible({...isvisible,count:data.response.count});
+      setLeadData(data.response.records);
+      
+      
+
+      const newRes= (data?.response.count?.filled).split("/");
+      if( (parseInt(newRes[0]) / parseInt(newRes[1])) ==1){
+        
         setComplete(true);
+      }else{
+        setComplete(false);
       }
     } catch (err) {
       console.log(err);
@@ -42,6 +53,7 @@ const Addbucket = () => {
   useEffect(() => {
     FetchData();
   }, []);
+
   const handleAccept = async (lead_type,ID) => {
     const payload={
       bucket_id: count.bucket_id,
@@ -116,7 +128,7 @@ const Addbucket = () => {
         <Link href='/bucket/makebucket/'><i className="fa-solid fa-arrow-left-long absolute -left-8 text-lg top-0.5 cursor-pointer"></i></Link>
          <div className='flex items-center gap-4'>
           <h1 className=' text-lg font-semibold'>Leads </h1>
-          <h3 className=' text-sm text-prime-red font-semibold'>{count?.filled} leads</h3>
+          <h3 className=' text-sm text-prime-red font-semibold'>{count?.filled} {console.log("count.filled",count.filled)} leads</h3>
          </div>
          <div className=' text-right'>12-October-2022</div>
         </div>
@@ -303,10 +315,20 @@ const Addbucket = () => {
             </ul>
           </div>
       </div>
-     {complete==true && <div className=' text-center'>
-         <button className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red' onClick={()=>setComplete(false)}>Cancel</button>
-         <button className='px-4 p-1 font-semibold ml-6 rounded bg-[#4F81FF] text-white' onClick={handleComplete}>Complete Bucket</button>
-      </div>}
+     {complete==true &&
+      <div className=' text-center'>
+         <button 
+         className='px-4 p-0.5 pb-1 font-semibold rounded border-[1.5px] border-prime-red text-prime-red' 
+         onClick={()=>setComplete(false)}>
+          Cancel
+          </button>
+         <button 
+         className='px-4 p-1 font-semibold ml-6 rounded bg-[#4F81FF] text-white' 
+         onClick={handleComplete}>
+          Complete Bucket
+          </button>
+      </div>
+       } 
       
         </div>
     </div>
