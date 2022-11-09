@@ -128,7 +128,7 @@ const Addbucket = () => {
         <Link href='/bucket/makebucket/'><i className="fa-solid fa-arrow-left-long absolute -left-8 text-lg top-0.5 cursor-pointer"></i></Link>
          <div className='flex items-center gap-4'>
           <h1 className=' text-lg font-semibold'>Leads </h1>
-          <h3 className=' text-sm text-prime-red font-semibold'>{count?.filled} {console.log("count.filled",count.filled)} leads</h3>
+          <h3 className=' text-sm text-prime-red font-semibold'>{count?.filled} leads</h3>
          </div>
          <div className=' text-right'>12-October-2022</div>
         </div>
