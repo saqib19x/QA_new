@@ -14,6 +14,7 @@ const Audio = dynamic(() => import("../../components/Audio/index"), {
 import Cookies from "js-cookie";
 import { ProtectedPage } from "../../components/Layout/ProtectedPage";
 import PropertyDetails from "../../components/PropertyDetails";
+import {baseUrl} from '../../services/helperFunction';
 
 function Allleads() {
   const dispatch = useDispatch();
@@ -46,7 +47,7 @@ function Allleads() {
     const id = data.id;
     try {
       const { data } = await axios.put(
-        `http://43.205.216.194:8000/QA/lead-update/${id}`,
+        `${baseUrl}/QA/lead-update/${id}`,
         payload,
         {
           headers: {

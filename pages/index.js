@@ -6,6 +6,7 @@ import { setAuth } from "../redux/authSlice";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { baseUrl } from "../services/helperFunction";
 
 const Home = () => {
   const router = useRouter();
@@ -15,7 +16,7 @@ const Home = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://43.205.216.194:8000/lead/member-login/",
+      const { data } = await axios.post(`${baseUrl}/lead/member-login/`,
         {
           email: userId,
           password: password,
